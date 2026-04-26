@@ -1,0 +1,26 @@
+.env
+.env.local
+
+data/raw/
+data/staging/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.uv/
+etl/uv.lock
+
+# Node
+node_modules/
+.next/
+out/
+dist/
+*.log
+.DS_Store
+
+# Neo4j volumes (if mounted locally)
+neo4j-data/
+neo4j-logs/
+neo4j-import/
+neo4j-plugins/

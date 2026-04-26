@@ -1,0 +1,32 @@
+services:
+  neo4j:
+    image: neo4j:5-community
+    container_name: comex-neo4j
+    restart: unless-stopped
+    ports:
+      - "7474:7474"   # HTTP (Neo4j Browser)
+      - "7687:7687"   # Bolt
+    environment:
+      NEO4J_AUTH: "neo4j/${NEO4J_PASSWORD:?NEO4J_PASSWORD is required}"
+      # Sized for a small VM (2GiB colima default). Bump these if you resize the VM.
+      NEO4J_server_memory_heap_initial__size: "256m"
+      NEO4J_server_memory_heap_max__size: "768m"
+      NEO4J_server_memory_pagecache_size: "256m"
+      NEO4J_db_transaction_timeout: "60s"
+      NEO4J_PLUGINS: '["apoc"]'
+    volumes:
+      - neo4j-data:/data
+      - neo4j-logs:/logs
+      - ./etl/cypher:/cypher:ro
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - cypher-shell -u neo4j -p $${NEO4J_PASSWORD:-changeme_please} "RETURN 1" || exit 1
+      interval: 10s
+      timeout: 10s
+      retries: 20
+      start_period: 30s
+
+volumes:
+  neo4j-data:
+  neo4j-logs:
